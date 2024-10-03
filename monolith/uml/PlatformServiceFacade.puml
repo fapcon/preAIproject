@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+TradingView -> GatewayAPI: Buy Market Order Currency Request on signal
+GatewayAPI -> PlatformFacade: Buy Market Order Currency Request
+
+PlatformFacade -> StrategyService: Buy Market Order Currency Request
+
+StrategyService -> StrategyService: Pick strategy
+
+StrategyService -> BillingService: Pick users with non zero balance
+StrategyService <-- BillingService: Users with non zero balance Response
+
+StrategyService -> ExchangerService: Strategy Buy Market Order Currency Request
+
+ExchangerService -> ExchangerService: Check open orders count
+
+ExchangerService -> ExchangeAPI: (Binance) Buy Market Order Currency Request
+ExchangerService <-- ExchangeAPI: (Binance) Buy Market Order Currency Response
+
+ExchangerService -> ExchangeAPI: (Binance) Create Limit Order Currency Request
+ExchangerService <-- ExchangeAPI: (Binance) Create Limit Order Currency Response
+
+StrategyService <-- ExchangerService : Strategy Buy Market Order Currency Response
+
+ExchangerService -> ExchangeAPI: Check Open orders Request
+ExchangerService <-- ExchangeAPI: Check Open orders Response
+
+@enduml

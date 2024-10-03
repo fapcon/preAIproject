@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+package auth;
+
+option go_package = "./sso";
+
+// Auth is service for managing permission and roles.
+service Auth {
+  // Register new user.
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+  // Login user.
+  rpc Login (LoginRequest) returns (LoginResponse);
+  // Profile get profile of user by token
+  rpc Profile(ProfileRequest) returns(ProfileResponse);
+  // IsAdmin checks where a user is an admin.
+  rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
+  // RegisterApp register new app.
+  rpc RegisterApp (RegisterAppRequest) returns (google.protobuf.Empty);
+  // SocialCallback callback to process answer from provider
+  rpc SocialCallback(SocialCallbackRequest) returns(LoginResponse) {}
+  // SocialGetRedirectURL generate redirect url
+  rpc SocialGetRedirectURL(SocialGetRedirectUrlRequest) returns(SocialGetRedirectUrlResponse) {}
+}
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message RegisterResponse {
+  int64 user_id = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+}
+
+message IsAdminRequest {
+  int64 user_id = 1;
+}
+
+message IsAdminResponse {
+  bool is_admin = 1;
+}
+
+message RegisterAppRequest {
+  int64 app_id = 1;
+  string name = 2;
+  string redirect_url=3;
+}
+
+message ProfileRequest {
+  string token = 1;
+}
+
+message ProfileResponse {
+  int64 id = 1;
+  string email = 2;
+  bytes password = 3;
+  bool is_admin = 4;
+  bool delete_status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  google.protobuf.Timestamp deleted_at = 8;
+}
+
+message SocialCallbackRequest{
+  string code = 1;
+  string provider = 2;
+}
+
+message SocialGetRedirectUrlRequest{
+  string provider = 1;
+}
+
+message SocialGetRedirectUrlResponse{
+  string url = 1;
+  int32 error_code =2;
+}

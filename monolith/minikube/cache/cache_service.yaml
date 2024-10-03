@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tradecache-service
+spec:
+  selector:
+    app: tradecache
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: LoadBalancer

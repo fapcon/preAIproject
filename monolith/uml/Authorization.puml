@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Client -> ApiGateway: Authentication Request
+ApiGateway --> Client: Authentication Response with tokens
+
+Client -> ApiGateway: Authentication Refresh token Request
+ApiGateway --> Client: Authentication Refresh token Response with tokens
+
+AuthService -> ApiGateway: Authentication Request
+ApiGateway --> AuthService: Authentication Response with tokens
+
+AuthService -> ApiGateway: Authentication Refresh token Request
+ApiGateway --> AuthService: Authentication Refresh token Response with tokens
+
+AuthService -> UserService: Authentication Request
+UserService --> AuthService: Authentication Response
+
+Client -> ApiGateway: Authorized interact Request
+Client <-- ApiGateway: Authorized interact Response
+
+PlatformServiceFacade -> ApiGateway: Authorized interact Request
+ApiGateway --> PlatformServiceFacade: Authorized interact Response
+
+@enduml

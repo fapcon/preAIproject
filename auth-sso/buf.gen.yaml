@@ -1,0 +1,11 @@
+version: v1
+plugins:
+  - name: go
+    out: pb
+    opt:
+      - paths=import
+
+  - name: go-grpc
+    out: pb
+    opt:
+      - paths=import

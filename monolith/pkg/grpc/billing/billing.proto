@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package billing_service_grpc;
+option go_package="./billing_service_grpc";
+
+service BillingService {
+
+}

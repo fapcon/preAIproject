@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+option go_package = "studentgit.kata.academy/eazzyearn/students/mono/monolith/pkg/grpc/user;user";
+
+package user;
+
+service UserServiceGRPC {
+  rpc Create (UserCreateIn) returns (UserCreateOut) {}
+  rpc Update (UserUpdateIn) returns (UserUpdateOut) {}
+  rpc VerifyEmail (UserVerifyEmailIn) returns (UserUpdateOut) {}
+  rpc ChangePassword (ChangePasswordIn) returns (ChangePasswordOut) {}
+  rpc GetByEmail (GetByEmailIn) returns (UserOut) {}
+  rpc GetByPhone (GetByPhoneIn) returns (UserOut) {}
+  rpc GetByID (GetByIDIn) returns (UserOut) {}
+  rpc GetByIDs (GetByIDsIn) returns (UsersOut) {}
+  rpc BanByID(BanByIDIn) returns(BanByIDOut){}
+  rpc IsBanned(IsBannedIn) returns(IsBannedOut){}
+  rpc UnbanByID(UnbanByIDIn) returns(UnbanByIDOut){}
+}
+
+message User {
+  int32 id = 1;
+  string name = 2;
+  string phone = 3;
+  string email = 4;
+  string password = 5;
+  int32 role = 6;
+  int32 status = 7;
+  bool verified = 8;
+  bool email_verified = 9;
+  bool phone_verified = 10;
+}
+
+message ChangePasswordIn {
+  string email = 1;
+  string old_password = 2;
+  string new_password = 3;
+  string confirm_new_password=4;
+}
+
+message ChangePasswordOut {
+  bool success = 1;
+  int32 error_code = 2;
+}
+
+message GetByIDIn {
+  int32 user_id = 1;
+}
+
+message GetByIDsIn {
+  repeated int32 user_ids = 1;
+}
+
+message UserOut {
+  User user = 1;
+  int32 error_code = 2;
+}
+
+message UsersOut {
+  repeated User user = 1;
+  int32 error_code = 2;
+}
+
+message GetByEmailIn {
+  string email = 1;
+}
+
+message GetByPhoneIn {
+  string phone = 1;
+}
+
+message UserCreateIn {
+  string name = 1;
+  string phone = 2;
+  string email = 3;
+  string password = 4;
+  int32 role = 5;
+  string idempotency_key = 6;
+}
+
+message UserCreateOut {
+  int32 user_id = 1;
+  int32 error_code = 2;
+}
+
+message UserUpdateIn {
+  User user = 1;
+  repeated int32 fields = 2;
+}
+
+message UserUpdateOut {
+  bool success = 1;
+  int32 error_code = 2;
+}
+
+message UserVerifyEmailIn {
+  int32 user_id = 1;
+}
+
+message BanByIDIn {
+  int32 id = 1;
+  string reason = 2;
+  int32 for = 3;
+}
+
+message BanByIDOut {
+  bool success = 1;
+  int32 error_code = 2;
+}
+
+message IsBannedIn {
+  int32 id = 1;
+}
+
+message IsBannedOut {
+  float time_to_end = 1;
+  int32 error_code = 2;
+  bool is_banned = 3;
+}
+
+message UnbanByIDIn {
+  int64 id = 1;
+}
+
+message UnbanByIDOut {
+  bool success = 1;
+  int64 error_code = 2;
+}

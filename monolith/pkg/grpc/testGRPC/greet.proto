@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package greet;
+option go_package="./greet_grpc";
+
+service GreetService {
+  rpc Hello(Request) returns(Message){}
+  rpc Bye(Request) returns(Message){}
+
+}
+
+message Request {
+  string Name = 1;
+}
+
+message Message{
+  int64 ID = 1;
+  string Answer = 2;
+}

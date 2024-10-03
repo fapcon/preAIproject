@@ -1,0 +1,110 @@
+package errors
+
+const (
+	NoError = iota
+	InternalError
+	GeneralError
+)
+
+const (
+	HashPasswordError = iota + 1000
+)
+
+const (
+	AuthServiceGeneralErr = iota + 2000
+	AuthServiceWrongPasswordErr
+	AuthServiceAccessTokenGenerationErr
+	AuthServiceRefreshTokenGenerationErr
+	AuthServiceUserNotVerified
+	AuthServiceVerifyErr
+	AuthGenerateHashErr
+	AuthUrlParseErr
+	AuthServiceSocialAuthErr
+	AuthServiceUserBanned
+	AuthServiceRegisterErr
+	AuthServiceEmailErr
+
+	UserServiceWrongPhoneCodeErr
+	UserServiceCreateUserErr
+	UserServiceUserAlreadyExists
+	UserServiceRetrieveUserErr
+	UserServiceUpdateErr
+	UserServiceChangePasswordErr
+	UserServiceBanError
+	UserServiceGetBannedErr
+	UserServiceUnbanErr
+	UserServiceInvalidConfirmPassword
+	UserServicePasswordMismatch
+	UserServiceIncorrectOldPassword
+	UserServiceResetPasswordErr
+	UserServiceInvalidResetCode
+	UserServiceSendResetCodeEmailErr
+
+	NotifyEmailSendErr
+	UserServiceVerifyEmailErr
+	UserServiceGetByEmailErr
+	UserServiceGetByPhoneErr
+	UserServiceGetByIDErr
+	UserServiceGetByIDsErr
+	UserServiceIsBannedError
+
+	PostServiceGetByIdErr
+	PostServiceCreatePostErr
+	PostServiceUpdatePostErr
+	PostServiceCreatedOtherUser
+	PostServiceDeletePostErr
+	PostServiceGetListErr
+	PostServiceLimitOffsetLenErr
+	PostServiceOffsetErr
+
+	StrategyServiceUUIDGenerateErr
+	StrategyServiceCreateErr
+	StrategyServiceUpdateErr
+	StrategyServiceDeleteErr
+	StrategyServiceRetrieveErr
+	StrategyServiceStrategyAlreadyExists
+	StrategyServiceStrategyDoesntExist
+
+	BotServiceGetErr
+	BotServiceUUIDGenerateErr
+	BotServiceCreateErr
+	BotServiceUpdateErr
+
+	ExchangeServiceGetTickerErr
+	ExchangeServiceParsePriceErr
+
+	PlatformExchangeServiceGetTickerErr
+	PlatformExchangeServiceGetExchangeListErr
+	PlatformExchangeServiceAddExchangeUserErr
+	PlatformExchangeServiceExchangeUserListErr
+	PlatformExchangePutOrderGetPairError
+	PlatformExchangeCreateOrderError
+	PlatformExchangeUpdateOrderError
+	PlatformExchangeCreateOrderLogError
+
+	WebhookProcessError
+	WebhookBotInactive
+	WebhookRetrieveByUUIDError
+	WebhookUpdateStatusError
+
+	CommentServiceGetByIdErr
+	CommentServiceCreateCommentErr
+	CommentServiceUpdateCommentErr
+	CommentServiceCreatedOtherUser
+	CommentServiceDeleteCommentErr
+	CommentServiceGetListErr
+	CommentServiceLimitOffsetLenErr
+	CommentServiceOffsetErr
+
+	UserSubError
+	UserSubAddError
+	UserSubListError
+	UserSubDeleteError
+	UserSubAlreadyExists
+	UserSubNotFound
+
+	StatisticServiceUpdateErr
+	StatisticServiceGetBotStatisticError
+	StatisticServiceGetUserStatisticError
+	StatisticServiceDeleteErr
+)

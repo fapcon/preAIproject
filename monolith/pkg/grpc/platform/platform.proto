@@ -1,0 +1,549 @@
+syntax = "proto3";
+
+package platform_service_grpc;
+option go_package="./platform_service_grpc"; //не убирал, поэтому перегенеренные файлы в новой папочке
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+service PlatformServiceGRPC {
+  rpc GetTicker(Empty) returns(GetTickerOut){}
+  rpc ExchangeList(Empty) returns(ExchangeListOut){}
+  rpc ExchangeListDelete(exchangeListID) returns(Error){}
+  rpc ExchangeAdd(ExchangeAddIn) returns(ExchangeOut){}
+  rpc ExchangeUserKeyAdd(ExchangeUserKeyAddIn) returns(ExchangeOut){}
+  rpc CheckKeys(ExchangeUserKeyAddIn) returns(Error){}
+  rpc ExchangeUserKeyDelete(exchangeUserKeyIDIn) returns(Error){}
+  rpc ExchangeUserKeyList(ExchangeUserListIn) returns(ExchangeUserListOut){}
+  rpc WebhookProcess(WebhookProcessIn) returns(WebhookProcessOut){}
+  rpc CancelOrder(OrderIn) returns(CancelOrderOut){}
+  rpc UpdateWebhookStatus(UpdateWebhookStatusIn) returns(Empty){}
+  rpc GetBot(GetBotIn) returns(GetBotOut){}
+  rpc CreateWebhookProcess(CreateWebhookProcessIn) returns(CreateWebhookProcessOut){}
+  rpc GetUserKeys(GetUserKeysIn) returns(GetUserKeysOut){}
+  rpc WriteWebhookHistory(WebhookProcessHistoryDTO) returns(Empty){}
+  rpc WriteOrderLog(ExchangeOrderLogDTO) returns(Empty){}
+  rpc WriteOrder(WriteOrderIn) returns(Error){}
+  rpc OrderSellLimit(OrderSellLimitIn) returns(Empty){}
+  rpc PutOrder(OrderIn) returns(PutOrderOut){}
+  rpc GetBotWebhooks(GetBotRelationIn) returns(GetWebhooksOut){}
+  rpc GetBotInfo(GetBotInfoIn) returns(GetBotInfoOut){}
+  rpc GetWebhookInfo(GetWebhookInfoIn) returns(GetWebhookInfoOut){}
+  rpc GetUserWebhooks(GetUserRelationIn) returns(GetWebhooksOut){}
+  rpc GetOrdersStatistic(GetBotRelationIn) returns(StatisticOut){}
+  rpc AddOrdersStatistic(AddOrdersStatisticIn) returns(StatisticOut){}
+  rpc GetBotOrders(GetBotRelationIn) returns(GetOrdersOut){}
+  rpc GetUserOrders(GetUserRelationIn) returns(GetOrdersOut){}
+  rpc ExchangeOrderList(GetBotRelationIn) returns(GetOrdersOut){}
+  rpc GetAllOrdersStatistic(GetUserRelationIn) returns(StatisticOut){}
+}
+
+message Empty {}
+
+message Error {
+  string ErrorMessage = 1;
+}
+
+//struct from exchange_list.go
+message ExchangeTicker {
+  int64 ID = 1;
+  string Pair = 2;
+  float Price = 3;
+  int64 ExchangeID = 4;
+}
+
+message GetTickerOut {
+  int64 ErrorCode = 1;
+  repeated ExchangeTicker Data = 2;
+}
+
+message ExchangeListOut {
+  int64 ErrorCode = 1;
+  repeated ExchangeList Data = 2;
+}
+
+//struct from exchange_list.go
+message ExchangeList {
+  int64 ID = 1;
+  string Name = 2;
+  string Description = 3;
+  string Slug = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  google.protobuf.Timestamp UpdatedAt = 6;
+  google.protobuf.Timestamp DeletedAt = 7;
+}
+
+message exchangeListID {
+  int64 exchangeListID = 1;
+}
+
+message ExchangeAddIn {
+  int64 UserID = 1;
+  string Name = 2;
+  string Description = 3;
+  string Slug = 4;
+}
+
+message ExchangeOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+}
+
+message ExchangeUserKeyAddIn {
+  int64 ExchangeID = 1;
+  int64 UserID = 2;
+  string APIKey = 3;
+  string SecretKey = 4;
+}
+
+message exchangeUserKeyIDIn {
+  int64 exchangeUserKeyID = 1;
+  int64 UserID = 2;
+}
+
+message ExchangeUserListIn {
+  int64 UserID = 1;
+}
+
+message ExchangeUserListOut {
+  int64 ErrorCode = 1;
+  repeated exchangeUserKeyID Data = 2;
+}
+
+//struct from exchange_user_key.go
+message exchangeUserKeyID {
+  int64 ID = 1;
+  int64 ExchangeID = 2;
+  int64 UserID = 3;
+  string Label = 4;
+  bool MakeOrder = 5;
+  string APIKey = 6;
+  string SecretKey = 7;
+  StatisticData StatisticData = 8;
+}
+
+//struct from exchange_user_key.go
+message StatisticData {
+  Decimal SumSell = 1;
+  Decimal SumBuy = 2;
+  Decimal Profit = 3;
+  Decimal ToSell = 4;
+  Decimal ToEarn = 5;
+  Decimal Earned = 6;
+}
+
+message WebhookProcessIn {
+  string Slug = 1;
+  string XForwardedFor = 2;
+  string RemoteAddr = 3;
+}
+
+message WebhookProcessOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+}
+
+message WriteOrderIn {
+  OrderOut ExchangeOrder = 1;
+  WebhookProcessDTO Webhook = 2;
+  Bot Bot = 3;
+  ExchangeOrderDTO BuyOrder = 4;
+  int64 Side = 5;
+  int64 OrderType = 6;
+  Signal Signal = 7;
+  string Message = 8;
+  int64 UnitedOrders = 9;
+  ExchangeUserKeyDTO Key = 10;
+}
+
+//struct from exchanger_interface.go
+message OrderOut {
+  string ClientOrderID = 1;
+  int64 OrderID = 2;
+  Decimal Price = 3;
+  Decimal Amount = 4;
+  Decimal Quantity = 5;
+  string Pair = 6;
+  int64 Status = 7;
+  int64 Side = 8;
+  int64 Type = 9;
+  int64 ExchangeOrderType = 10;
+  int64 ErrorCode = 11;
+  string Message = 12;
+}
+
+//struct from webhook_process_dto.go
+//
+message WebhookProcessDTO {
+  int64 ID = 1;
+  string UUID = 2;
+  string BotUUID = 3;
+  int64 OrderID = 4;
+  string OrderUUID = 5;
+  int64 BotID = 6;
+  int64 UserID  = 7;
+  string Slug = 8;
+  int64 Status = 9;
+  string Message = 10;
+  string XForwardedFor = 11;
+  string RemoteAddr = 12;
+  google.protobuf.Timestamp CreatedAt = 13;
+  google.protobuf.Timestamp UpdatedAt = 14;
+  NullTime DeletedAt = 15;
+
+}
+//types.NullTime
+message NullTime {
+  google.protobuf.Timestamp Time = 1;
+  bool Valid = 2;
+}
+
+//struct from bot.go
+message Bot {
+  int64 ID = 1;
+  int64 Kind = 2;
+  int64 UserID = 3;
+  string Name = 4;
+  string Description = 5;
+  int64 PairID = 6;
+  float FixedAmount = 7;
+  int64 ExchangeType = 8;
+  int64 ExchangeID = 9;
+  int64 OrderType = 10;
+  float SellPercent = 11;
+  float CommissionPercent = 12;
+  string UUID = 13;
+  bool Active = 14;
+  bool LimitOrder = 15;
+  float LimitSellPercent = 16;
+  float LimitBuyPercent = 17;
+  bool AutoSell = 18;
+  float AutoLimitSellPercent = 19;
+  bool OrderCountLimit = 20;
+  int64 OrderCount = 21;
+  repeated StrategyPair Pairs = 22;
+  google.protobuf.Timestamp CreatedAt = 23;
+  google.protobuf.Timestamp UpdatedAt = 24;
+  google.protobuf.Timestamp DeletedAt = 25;
+}
+
+//struct from strategy_pair.go
+message StrategyPair {
+  int64 ID = 1;
+  int64 StrategyID = 2;
+  int64 PairID = 3;
+}
+
+//struct from exchange_order_dto.go
+message ExchangeOrderDTO {
+  int64 ID = 1;
+  string UUID = 2;
+  string BotUUID = 3;
+  int64 OrderType = 4;
+  int64 ExchangeOrderType = 5;
+  int64 Side = 6;
+  int64 ExchangeOrderID = 7;
+  int64 UnitedOrders = 8;
+  int64 UserID = 9;
+  int64 ExchangeID = 10;
+  int64 PairID = 11;
+  int64 BuyOrderID = 12;
+  int64 ApiKeyID = 13;
+  string Pair = 14;
+  Decimal Amount = 15;
+  Decimal Quantity = 16;
+  Decimal Price = 17;
+  Decimal BuyPrice = 18;
+  int64 Status = 19;
+  string WebHookUUID = 20;
+  string Message = 21;
+  google.protobuf.Timestamp CreatedAt = 22;
+  google.protobuf.Timestamp UpdatedAt = 23;
+  NullTime DeletedAt = 24;
+}
+
+message Signal {
+  int64 OrderType = 1;
+  string Pair = 2;
+  int64 PairID = 3;
+  Decimal PairPrice = 4;
+  string BotUUID = 5;
+}
+
+//struct from exchange_user_key_dto.go
+message ExchangeUserKeyDTO {
+  int64 ID = 1;
+  int64 ExchangeID = 2;
+  int64 UserID = 3;
+  string Label = 4;
+  bool MakeOrder = 5;
+  string APIKey = 6;
+  string SecretKey = 7;
+  google.protobuf.Timestamp CreatedAt = 8;
+  google.protobuf.Timestamp UpdatedAt = 9;
+  NullTime DeletedAt = 10;
+}
+
+//for RPC method CancelOrder
+message OrderIn {
+  google.protobuf.Any ExClient = 1;
+  WebhookProcessDTO Webhook = 2;
+  Bot Bot = 3;
+  Signal Signal = 4;
+  ExchangeUserKeyDTO Key = 5;
+  ExchangeOrderDTO BuyOrder = 6;
+}
+
+message CancelOrderOut {
+  repeated OrderOut ExchangeOrders = 1;
+  repeated ExchangeOrderDTO PlatformOrders = 2;
+}
+
+//for RPC method UpdateWebhookStatus
+message UpdateWebhookStatusIn {
+  Bot Bot = 1;
+  WebhookProcessDTO WebHook = 2;
+  ExchangeOrderDTO OrderDTO = 3;
+  string Message = 4;
+  int64 Status = 5;
+}
+
+//for RPC method GetBot
+message GetBotIn {
+  string BotUUID = 1;
+}
+
+message GetBotOut {
+  Bot Bot = 1;
+  string Error = 2;
+}
+
+//for RPC method CreateWebhookProcess
+message CreateWebhookProcessIn {
+  Bot Bot = 1;
+  WebhookProcessIn WebHookProcessIn = 2;
+}
+
+message CreateWebhookProcessOut {
+  WebhookProcessDTO WebhookProcessDTO = 1;
+  string Error = 2;
+}
+
+//for RPC method GetUserKeys
+message GetUserKeysIn {
+  int64 ExchangeID = 1;
+  int64 UserID = 2;
+}
+
+message GetUserKeysOut {
+  repeated ExchangeUserKeyDTO ExchangeUserKeyDTO = 1;
+  string Error = 2;
+}
+
+//for RPC method WriteWebhookHistory
+message WebhookProcessHistoryDTO {
+  int64 ID = 1;
+  int64 UserID = 2;
+  int64 ExchangeID = 3;
+  string WebhookUUID = 4;
+  int64 Status = 5;
+  NullString Message = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  google.protobuf.Timestamp UpdatedAt = 8;
+  NullTime DeletedAt = 9;
+}
+
+message NullString {
+  string String = 1;
+  bool Valid = 2;
+}
+
+//for RPC method WriteOrderLog
+message ExchangeOrderLogDTO {
+  int64 ID = 1;
+  string UUID = 2;
+  int64 OrderID = 3;
+  int64 ExchangeID = 4;
+  string Pair = 5;
+  Decimal Quantity = 6;
+  Decimal Amount = 7;
+  Decimal Price = 8;
+  int64 Status = 9;
+  google.protobuf.Timestamp CreatedAt = 10;
+  google.protobuf.Timestamp UpdatedAt = 11;
+  NullTime DeletedAt = 12;
+}
+
+//for RPC method OrderSellLimit
+message OrderSellLimitIn {
+  OrderIn OrderIn = 1;
+  Decimal Quantity = 2;
+  Decimal Price = 3;
+  int64 UnitedOrders = 4;
+}
+
+//for RPC method PutOrder
+message PutOrderOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+}
+
+//for RPC method GetBotWebhooks
+message GetBotRelationIn {
+  string BotUUID = 1;
+}
+
+message GetWebhooksOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+  repeated WebhookProcess Data = 3;
+}
+
+//struct from webhook_process.go
+message WebhookProcess {
+  int64 ID = 1;
+  string UUID = 2;
+  string BotUUID = 3;
+  int64 OrderID = 4;
+  int64 BotID = 5;
+  int64 UserID = 6;
+  string Slug = 7;
+  int64 Status = 8;
+  string StatusMsg = 9;
+  string Message = 10;
+  string OrderUUID = 11;
+  string XForwardedFor = 12;
+  repeated WebhookProcessHistory History = 13;
+  google.protobuf.Timestamp CreatedAt = 14;
+  google.protobuf.Timestamp UpdatedAt = 15;
+  google.protobuf.Timestamp DeletedAt = 16;
+}
+
+//struct from webhook_process_history.go
+message WebhookProcessHistory {
+  string UUID = 1;
+  int64 OrderID = 2;
+  int64 UserID = 3;
+  int64 ExchangeID = 4;
+  string Pair = 5;
+  string WebhookUUID = 6;
+  int64 WebhookID = 7;
+  int64 Status = 8;
+  string StatusMsg = 9;
+  google.protobuf.Timestamp CreatedAt = 10;
+  google.protobuf.Timestamp UpdatedAt = 11;
+}
+
+//for RPC method GetBotInfo
+message GetBotInfoIn {
+  string BotUUID = 1;
+  int64 UserID = 2;
+}
+
+message GetBotInfoOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+  GetBotInfoData Data = 3;
+}
+
+message GetBotInfoData {
+  Bot Bot = 1;
+  repeated ExchangeOrder Orders = 2;
+  repeated WebhookProcess Webhooks = 3;
+}
+
+//struct from exchange_order.go
+message ExchangeOrder {
+  int64 ID = 1;
+  string UUID = 2;
+  int64 OrderID = 3;
+  int64 UserID = 4;
+  int64 ExchangeID = 5;
+  int64 UnitedOrders = 6;
+  int64 OrderType = 7;
+  string OrderTypeMsg = 8;
+  string Pair = 9;
+  Decimal Amount = 10;
+  Decimal Quantity = 11;
+  Decimal Price = 12;
+  int64 Side = 13;
+  string SideMsg = 14;
+  repeated ExchangeOrderLog History = 15;
+  int64 SumBuy = 16;
+  int64 ApiKeyID = 17;
+  google.protobuf.Timestamp CreatedAt = 18;
+  google.protobuf.Timestamp UpdatedAt = 19;
+  NullTime DeletedAt = 20;
+}
+
+//struct from exchange_order_log.go
+message ExchangeOrderLog {
+  string UUID = 1;
+  int64 OrderID = 2;
+  int64 UserID = 3;
+  int64 ExchangeID = 4;
+  string Pair = 5;
+  Decimal Quantity = 6;
+  Decimal Price = 7;
+  int64 Status = 8;
+  string StatusMsg = 9;
+  google.protobuf.Timestamp CreatedAt = 10;
+}
+
+//for RPC method GetWebhookInfo
+message GetWebhookInfoIn {
+  string WebhookUUID = 1;
+  int64 UserID = 2;
+}
+
+message GetWebhookInfoOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+  GetWebhookInfoData Data = 3;
+}
+
+message GetWebhookInfoData {
+  WebhookProcess Webhook = 1;
+  repeated ExchangeOrder Orders = 2;
+}
+
+message GetUserRelationIn {
+  int64 UserID = 1;
+}
+
+message StatisticOut {
+  repeated ExchangeUserKey Keys = 1;
+}
+
+//struct from exchange_user_key_dto.go
+message ExchangeUserKey {
+  int64 ID = 1;
+  int64 ExchangeID = 2;
+  int64 UserID = 3;
+  string Label = 4;
+  bool MakeOrder = 5;
+  string APIKey = 6;
+  string SecretKey = 7;
+  StatisticData StatisticData = 8;
+}
+
+//по сути двумя нижними сущностями можно представить слайс из указателей.
+message AddOrdersStatisticIn {
+  repeated ExchangeOrderPointer Orders = 1;
+}
+
+message ExchangeOrderPointer {
+  optional ExchangeOrder Order = 1;
+}
+
+message GetOrdersOut {
+  int64 ErrorCode = 1;
+  bool Success = 2;
+  repeated ExchangeOrder Data = 3;
+}
+
+message Decimal{
+  int64 Num = 1; //целая часть
+  int32 Exp = 2; //экспоненциальная часть
+  bool Sign = 3; //+-
+}

@@ -1,0 +1,147 @@
+{
+  "consumes": [
+    "application/json",
+    "multipart/form-..database"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Documentation of your project API.",
+    "title": "infoblog.",
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/v1/user/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Авторизация пользователя.",
+        "operationId": "loginRequest",
+        "parameters": [
+          {
+            "example": "{\"email\":\"solo228@gmail.com\",\"password\":\"322\"}",
+            "description": "Userdata - данные пользователя",
+            "name": "Userdata",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/loginResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/user/logout": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Выйти из акаунта.",
+        "operationId": "logoutRequest",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/logoutResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/user/profile": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Профиль пользователя.",
+        "operationId": "profileRequest",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/profileResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/user/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Регистрация пользователя.",
+        "operationId": "registerRequest",
+        "parameters": [
+          {
+            "example": "{\"email\":\"solo228@gmail.com\",\"password\":\"322\"}",
+            "description": "Userdata - данные пользователя",
+            "name": "Userdata",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/registerResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/user/{provider}/login": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Получить URL для авторизации.",
+        "operationId": "SocialGetRedirectURLRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "google, facebook",
+            "x-go-name": "Provider",
+            "description": "Provider - способ авторизации для данного пользователя",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SocialGetRedirectURLResponse"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "SocialGetRedirectURLResponse": {
+      "description": ""
+    },
+    "loginResponse": {
+      "description": ""
+    },
+    "logoutResponse": {
+      "description": ""
+    },
+    "profileResponse": {
+      "description": ""
+    },
+    "registerResponse": {
+      "description": ""
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

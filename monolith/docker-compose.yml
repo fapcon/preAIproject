@@ -1,0 +1,39 @@
+version: '3.3'
+services:
+  api:
+    container_name: tradeapi
+    build: '.'
+    command: sh -c "go mod tidy && go run ./cmd/api"
+    restart: always
+    volumes:
+      - ./:/go/src/studentgit.kata.academy/eazzyearn/students/mono/monolith
+      - $GOPATH/pkg/mod:/go/pkg/mod
+    environment:
+      - VIRTUAL_HOST=earnapi.eazzygroup.org
+      - LETSENCRYPT_HOST=earnapi.eazzygroup.org
+      - VIRTUAL_PORT=${SERVER_PORT}
+    networks:
+      - skynet
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+  cache:
+    container_name: tradecache
+    image: redis:7.0.2-alpine
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass ${CACHE_PASSWORD}'
+    restart: always
+    volumes:
+      - ../tradecache:/data
+    environment:
+      - CACHE_PASSWORD=${CACHE_PASSWORD}
+    networks:
+      - skynet
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+networks:
+  skynet:
+    external:
+      name: skynet

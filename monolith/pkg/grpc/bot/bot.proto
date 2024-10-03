@@ -1,0 +1,126 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "studentgit.kata.academy/eazzyearn/students/mono/monolith/pkg/grpc/bot;bot";
+
+
+package bot;
+
+service BotServiceGRPC {
+  rpc Create (BotCreateIn) returns (BotOut) {}
+  rpc Delete (BotDeleteIn) returns (BOut) {}
+  rpc Update (BotUpdateIn) returns (BOut) {}
+  rpc Get (BotGetIn) returns (BotOut) {}
+  rpc Toggle (BotToggleIn) returns (BOut) {}
+  rpc Subscribe (BotSubscribeIn) returns (BOut) {}
+  rpc Unsubscribe (BotSubscribeIn) returns (BOut) {}
+  rpc List (BotListIn) returns (BotListOut) {}
+  rpc WebhookSignal (WebhookSignalIn) returns (WebhookSignalOut) {}
+}
+
+message StrategyPair {
+  int32 ID = 1;
+  int32 StrategyID = 2;
+  int32 PairID = 3;
+}
+
+message Bot {
+  int32 ID = 1;
+  int32 Kind = 2;
+  int32 UserID = 3;
+  string Name = 4;
+  string Description = 5;
+  int32 PairID = 6;
+  double FixedAmount = 7;
+  int32 ExchangeType = 8;
+  int32 ExchangeID = 9;
+  int32 ExchangeUserKeyID = 10;
+  int32 OrderType = 11;
+  double SellPercent = 12;
+  double CommissionPercent = 13;
+  string UUID = 14;
+  bool Active = 15;
+  bool LimitOrder = 16;
+  double LimitSellPercent = 17;
+  double LimitBuyPercent = 18;
+  bool AutoSell = 19;
+  double AutoLimitSellPercent = 20;
+  bool OrderCountLimit = 21;
+  int32 OrderCount = 22;
+  repeated StrategyPair Pairs = 23;
+  google.protobuf.Timestamp CreatedAt = 24;
+  google.protobuf.Timestamp UpdatedAt = 25;
+  google.protobuf.Timestamp DeletedAt = 26;
+}
+
+message BotCreateIn {
+  int32 UserID = 1;
+}
+
+message BotSubscribeIn {
+  repeated int32 UserIDs = 1;
+  string StrategyUUID = 2;
+}
+
+message BOut {
+  bool Success = 1;
+  int32 Error_code = 2;
+}
+
+message BotListIn {
+  int32 UserID = 1;
+}
+
+message BotListOut {
+  repeated Bot Data = 1;
+  bool Success = 2;
+  int32 Error_code = 3;
+}
+
+message BotOut {
+  int32 Error_code = 1;
+  Bot Bot = 2;
+  map<string, string> Hooks = 3;
+}
+
+message Hooks {
+  string BuyMarket = 1;
+}
+
+message BotDeleteIn {
+  string UUID = 1;
+  int32 UserID = 2;
+}
+
+message BotGetIn {
+  string UUID = 1;
+  int32 ID = 2;
+}
+
+message BotUpdateIn {
+  Bot Bot = 1;
+  repeated int32 Fields = 2;
+  repeated int32 Pairs = 3;
+}
+
+message BotPairAdd {
+  int32 BotID = 1;
+  repeated int32 Pairs = 2;
+}
+
+message BotToggleIn {
+  string UUID = 1;
+  int32 UserID = 2;
+  bool Active = 3;
+}
+
+message WebhookSignalIn {
+  string BotUUID = 1;
+  int32 PairID = 2;
+}
+
+message WebhookSignalOut {
+  string Hook = 1;
+  repeated string Signals = 2;
+  int32 Error_code = 3;
+}

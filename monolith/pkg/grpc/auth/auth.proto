@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+option go_package = "studentgit.kata.academy/eazzyearn/students/mono/monolith/pkg/grpc/auth;auth";
+
+package auth;
+
+service AuthServiceGRPC{
+  rpc Register(RegisterIn) returns(RegisterOut) {}
+  rpc AuthorizeEmail(AuthorizeEmailIn) returns(AuthorizeOut) {}
+  rpc AuthorizeRefresh(AuthorizeRefreshIn) returns(AuthorizeOut) {}
+  rpc AuthorizePhone(AuthorizePhoneIn) returns(AuthorizeOut) {}
+  rpc SendPhoneCode(SendPhoneCodeIn) returns(SendPhoneCodeOut) {}
+  rpc VerifyEmail(VerifyEmailIn) returns(VerifyEmailOut) {}
+  rpc SocialCallback(SocialCallbackIn) returns(AuthorizeOut) {}
+  rpc SocialGetRedirectURL(SocialGetRedirectUrlIn) returns(SocialGetRedirectUrlOut) {}
+}
+
+message VerifyEmailIn{
+  string hash = 1;
+  string email = 2;
+}
+
+message VerifyEmailOut{
+  bool success = 1;
+  int32 error_code = 2;
+}
+
+message SendPhoneCodeIn{
+  string phone = 1;
+}
+
+message SendPhoneCodeOut{
+  string phone = 1;
+  int32 code = 2;
+  int32 error_code = 3;
+}
+
+message AuthorizeIn {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthorizeOut {
+  int32 user_id = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+  int32 error_code = 4;
+}
+
+message RegisterIn{
+  string email = 1;
+  string phone = 2;
+  string password = 3;
+  string idempotency_key = 4;
+  int32 Field = 5;
+}
+
+message RegisterOut{
+  int32  status = 1;
+  int32 error_code =2;
+}
+
+message AuthorizeEmailIn{
+  string email = 1;
+  string password = 2;
+  string retype_password = 3;
+}
+
+message AuthorizeRefreshIn{
+  int32 user_id = 1;
+}
+
+message AuthorizePhoneIn{
+  string phone = 1;
+  int32 code = 2;
+}
+
+message SocialCallbackIn{
+  string code = 1;
+  string provider = 2;
+}
+
+message SocialGetRedirectUrlIn{
+  string provider = 1;
+}
+
+message SocialGetRedirectUrlOut{
+  string url = 1;
+  int32 error_code =2;
+}

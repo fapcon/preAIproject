@@ -1,0 +1,59 @@
+version: '3.9'
+services:
+
+  sso-auth-api:
+    container_name: auth-sso
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PORT=${HTTP_PORT}
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}" # REST
+      - "${GRPC_PORT}:${GRPC_PORT}" # GRPC
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    env_file:
+      - .env
+    networks:
+      - sso-network
+      - skynet
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres:
+    container_name: auth-db
+    image: postgres:14.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /data/postgres
+    volumes:
+      - db-data:/data/postgres
+    networks:
+      - sso-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  skynet:
+    external:
+      name: skynet
+  sso-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+

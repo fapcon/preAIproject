@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+  db:
+    container_name: ${APP_NAME}_db
+    image: postgres:14.4-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+    ports:
+      - ${HOST}:5432:${DB_PORT}
+    networks:
+      - mylocal
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+  cache:
+    container_name: tradecache
+    image: redis:7.0.2-alpine
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass ${CACHE_PASSWORD}'
+    restart: always
+    volumes:
+      - ../tradecache:/data
+    environment:
+      - CACHE_PASSWORD=${CACHE_PASSWORD}
+    ports:
+      - ${HOST}:6379:${CACHE_PORT}
+    networks:
+      - mylocal
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+networks:
+  mylocal:
+    driver: bridge

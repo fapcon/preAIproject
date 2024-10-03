@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package binance;
+option go_package="./binance_service_gprc"; //не убирал, поэтому перегенеренные файлы в новой папочке
+import "google/protobuf/timestamp.proto";
+
+service BinanceServiceGRPC {
+  rpc CancelOrder(GetOrderIn) returns(OrderOut){}
+  rpc GetOrder(GetOrderIn) returns(OrderOut){}
+  rpc GetOrderHistory(EIn) returns(EOut){}
+  rpc GetOpenOrders(EIn) returns(EOut){}
+  rpc GetAccount(Empty) returns(GetAccountOut){}
+  rpc GetBalances(EIn) returns(GetBalancesOut){}
+  rpc GetTicker(GetTickerIn) returns(GetTickerOut){}
+  rpc GetCandles(GetCandlesIn) returns(GetCandlesOut){}//Если не нужно-выпилить. Изначально этот метод был в интерфейсе, но не был тут
+}
+
+message Empty{}
+
+message GetOrderIn {
+  string Pair = 1;
+  int64 OrderID = 2;
+}
+
+message OrderOut {
+  string ClientOrderID = 1;
+  int64 OrderID = 2;
+  Decimal Price = 3;
+  Decimal Amount = 4;
+  Decimal Quantity = 5;
+  string Pair = 6;
+  int64 Status = 7;
+  int64 Side = 8;
+  int64 Type = 9;
+  int64 ExchangeOrderType = 10;
+  int64 ErrorCode = 11;
+  string Message = 12;
+}
+
+message EIn{}
+
+message EOut {
+  int64 ErrorCode = 1;
+}
+
+message GetAccountOut {
+  int64 ErrorCode = 1;
+  Account Data = 2;
+  AccountMargin DataMargin = 3;
+  string Message = 4;
+  bool Success = 5;
+}
+
+message Account {
+  bool CanTrade = 1;
+  bool CanDeposit = 2;
+  bool CanWithdraw = 3;
+  repeated int64 Permissions = 4;
+  repeated Balance Balances = 5;
+}
+message AccountMargin{
+  bool BorrowEnabled = 1;
+  bool TradeEnabled = 2;
+  bool TransferEnabled = 3;
+  repeated BalanceMargin Balances = 4;
+}
+
+message BalanceMargin{
+  string Currency = 1;
+  Decimal Borrowed = 2;
+  Decimal Free = 3;
+  Decimal Interest = 4;
+  Decimal Locked = 5;
+  Decimal NetAsset = 6;
+
+}
+
+message Balance {
+  string Currency = 1;
+  Decimal Amount = 2;
+  Decimal Locked = 3;
+}
+
+message GetBalancesOut{
+  int64 ErrorCode = 1;
+  bool Success = 2;
+  repeated Balance DataSpotBalance = 3;
+  repeated Balance DataMarginBalance = 4;
+}
+
+message GetTickerIn {
+  int64 ExchangeID = 1;
+}
+
+message GetTickerOut {
+  int64 ErrorCode = 1;
+  map<string,Decimal> Data = 2;
+}
+
+
+
+message GetCandlesIn{
+  string Symbol = 1;
+  string Interval = 2;
+  int64 Limit = 3;
+  int64 StartTime = 4;
+  int64 EndTime = 5;
+}
+
+message GetCandlesOut{
+  int64 ErrorCode = 1;
+  repeated CandlesData Candles = 2;
+}
+
+message CandlesData{
+  google.protobuf.Timestamp OpenTime = 1;
+  Decimal    Open = 2;
+  Decimal    High = 3;
+  Decimal    Low = 4;
+  Decimal    Close = 5;
+  Decimal    Volume = 6;
+  google.protobuf.Timestamp   CloseTime = 7;
+  Decimal QuoteAssetVolume = 8;
+  int64    TradeNum = 9;
+  Decimal    TakerBuyBaseAssetVolume = 10;
+  Decimal    TakerBuyQuoteAssetVolume = 11;
+}
+
+message Decimal{
+  int64 Num = 1; //целая часть
+  int32 Exp = 2; //экспоненциальная часть
+  bool Sign = 3; //+-
+}
